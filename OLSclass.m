@@ -27,11 +27,11 @@ classdef OLSclass < handle
         % constructor..
         function self = OLSclass(x,y)
             % Data
-            self.x = x;
-            self.y = y;
+            self.x = x(:);
+            self.y = y(:);
             
             % Add column for intercept
-            self.X = [ones(length(self.x),1), x]; 
+            self.X = [ones(length(self.x),1), self.x]; 
         end
             
         % Perform OLS regression
@@ -42,18 +42,23 @@ classdef OLSclass < handle
             self.y_hat = self.test();
         end % Notice there are not ouptuts since we are just assigning the result back to the obj
         
-        % If we have hold out data we can test it
+        % Test our data - just realized this is redundant with predict
         function y_test = test(self)
-              y_test = self.params(1) + self.x*self.params(2);   
+              y_test = self.predict(self.x);   
+        end
+        
+        % If we have hold out data we can test it
+        function y_predict = predict(self,x_predict)
+              y_predict = self.params(1) + x_predict(:)*self.params(2);   
         end
         
         function fig = plot_OLS(self)
             
             % Plot the data
             fig = figure('color','w');
-            s1 = scatter(self.x,self.y,30,'filled'); hold on;
+            s1 = scatter(self.x,self.y,30,0.5.*ones(length(self.x),3),'filled'); hold on;
             if ~isempty(self.y_hat)
-                p1 = plot(self.x,self.y_hat,'color','r','Linewidth',1.5);
+                p1 = plot(self.x,self.y_hat,'color',[0,114, 178]./256','Linewidth',1.5);
                 which_leg = [s1,p1];
                 leg_labels = {'Observed (noisy) data', ['OLS: \alpha = ' num2str(self.params(1)) ', \beta = ' num2str(self.params(2))] };
             else
@@ -61,7 +66,7 @@ classdef OLSclass < handle
                 leg_labels = 'Observed (noisy) data';
             end
             
-            legend(which_leg,leg_labels,'Box','off','Location','northwest');
+            legend(which_leg,leg_labels,'Box','off','Location','best');
         end
     end % end public methods
            
