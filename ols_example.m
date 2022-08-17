@@ -41,7 +41,7 @@ legend([s1,p1,p2],leg_labels,'Box','off','Location','northwest')
 %% Now consider that we can just write the two things we do as functions
 
 % Get params
-params = OLS(x,y_observed)
+params = OLSfunction(x,y_observed)
 
 % Plot data - note that in our function we are pretending like we don't 
 % know the true data
